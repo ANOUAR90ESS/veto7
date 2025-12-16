@@ -102,14 +102,30 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
   // Automatically update page title based on current route
   usePageTitle();
 
-  // Deep Link Handling
+  // Map URL pathname to AppView
   useEffect(() => {
-    if (location.pathname.startsWith('/news/')) {
-        const id = location.pathname.replace('/news/', '');
-        if (id) {
-            setCurrentView(AppView.LATEST_NEWS);
-            setPreSelectedNewsId(id);
-        }
+    const path = location.pathname.toLowerCase();
+    
+    if (path === '/free-tools') {
+      setCurrentView(AppView.FREE_TOOLS);
+    } else if (path === '/paid-tools') {
+      setCurrentView(AppView.PAID_TOOLS);
+    } else if (path === '/top-tools') {
+      setCurrentView(AppView.TOP_TOOLS);
+    } else if (path.startsWith('/news/')) {
+      const id = path.replace('/news/', '');
+      if (id) {
+        setCurrentView(AppView.LATEST_NEWS);
+        setPreSelectedNewsId(id);
+      }
+    } else if (path === '/news' || path === '/latest-news') {
+      setCurrentView(AppView.LATEST_NEWS);
+    } else if (path === '/pricing') {
+      setCurrentView(AppView.PRICING);
+    } else if (path === '/profile') {
+      setCurrentView(AppView.PROFILE);
+    } else if (path === '/' || path === '') {
+      setCurrentView(AppView.HOME);
     }
   }, [location.pathname]);
 
@@ -172,13 +188,41 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
           return;
       }
       
+      // Update URL based on view for SEO indexing
+      switch(view) {
+        case AppView.HOME:
+          navigate('/');
+          setCategoryFilter('All');
+          break;
+        case AppView.FREE_TOOLS:
+          navigate('/free-tools');
+          break;
+        case AppView.PAID_TOOLS:
+          navigate('/paid-tools');
+          break;
+        case AppView.TOP_TOOLS:
+          navigate('/top-tools');
+          break;
+        case AppView.LATEST_NEWS:
+          navigate('/news');
+          break;
+        case AppView.PRICING:
+          navigate('/pricing');
+          break;
+        case AppView.PROFILE:
+          navigate('/profile');
+          break;
+        case AppView.SEARCH_RESULTS:
+          // Keep on same URL for search results
+          break;
+        default:
+          navigate('/');
+      }
+      
       setCurrentView(view);
       if (pageId) setCurrentPageId(pageId);
-      // Reset filters when changing main views
-      if (view === AppView.HOME) {
-         setCategoryFilter('All');
-      }
-      // Reset Search State if moving away
+      
+      // Reset Search State if moving away from search
       if (view !== AppView.SEARCH_RESULTS) {
           setSearchTerm('');
           setAiSearchResults(null);
