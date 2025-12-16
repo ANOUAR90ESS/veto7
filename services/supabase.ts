@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { VITE_SUPABASE_URL as LOCAL_URL, VITE_SUPABASE_ANON_KEY as LOCAL_KEY } from '../env.example';
 
 // Safe environment variable retrieval
 const getEnvVar = (key: string): string => {
@@ -24,9 +23,9 @@ const getEnvVar = (key: string): string => {
   return '';
 };
 
-// Use environment variables first, fallback to local config file
-const supabaseUrl = getEnvVar('VITE_SUPABASE_URL') || LOCAL_URL;
-const supabaseKey = getEnvVar('VITE_SUPABASE_ANON_KEY') || LOCAL_KEY;
+// Use environment variables
+const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
+const supabaseKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
 
 // Check if configured (truthy & non-empty)
 export const isSupabaseConfigured = !!supabaseUrl && !!supabaseKey;
