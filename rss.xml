@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/">
+<channel>
+  <title>VETORRE AI News &amp; Updates</title>
+  <link>https://www.vetorre.com</link>
+  <description>The latest insights, tool reviews, and updates from the VETORRE AI Directory and Playground.</description>
+  <language>en-us</language>
+  <lastBuildDate>Mon, 23 Oct 2025 09:00:00 GMT</lastBuildDate>
+  <atom:link href="https://www.vetorre.com/rss.xml" rel="self" type="application/rss+xml" />
+  
+  <item>
+    <title>Google Releases Gemini 2.5 Flash: Speed Meets Intelligence</title>
+    <link>https://www.vetorre.com/#/news/gemini-2-5-flash-release</link>
+    <guid isPermaLink="false">gemini-2-5-flash-release</guid>
+    <pubDate>Mon, 23 Oct 2025 08:00:00 GMT</pubDate>
+    <description>Google has officially rolled out Gemini 2.5 Flash, boasting a 40% reduction in latency for real-time multimodal applications. Developers can now access the new 'Thinking Config' for enhanced reasoning capabilities without sacrificing speed.</description>
+    <content:encoded><![CDATA[<p>Google has officially rolled out Gemini 2.5 Flash, boasting a 40% reduction in latency for real-time multimodal applications. This update is a game-changer for developers building live interaction tools.</p><p>Key features include:</p><ul><li>Reduced latency for audio and video processing</li><li>New Thinking Config for variable compute budget</li><li>Native integration with Veo for video output</li></ul>]]></content:encoded>
+    <category>Technology</category>
+    <source url="https://blog.google/technology/ai/">Google DeepMind</source>
+    <enclosure url="https://picsum.photos/seed/gemini/1200/630" length="0" type="image/jpeg" />
+    <media:content url="https://picsum.photos/seed/gemini/1200/630" medium="image" />
+  </item>
+
+  <item>
+    <title>Veo Studio: Cinematic Video Generation Now Available</title>
+    <link>https://www.vetorre.com/#/news/veo-studio-launch</link>
+    <guid isPermaLink="false">veo-studio-launch</guid>
+    <pubDate>Sun, 22 Oct 2025 14:30:00 GMT</pubDate>
+    <description>VETORRE integrates Google's Veo model, allowing users to generate 1080p cinematic videos from simple text prompts. The new feature supports variable aspect ratios and image-to-video capabilities.</description>
+    <content:encoded><![CDATA[<p>The wait is over. Veo, Google's most capable video generation model, is now available in the VETORRE Studio.</p><p>Creators can generate high-fidelity 1080p clips that extend beyond 60 seconds. The model understands cinematic terminology, lighting requests, and physics-based movement instructions better than any predecessor.</p>]]></content:encoded>
+    <category>Video AI</category>
+    <source url="https://www.vetorre.com">VETORRE Blog</source>
+    <enclosure url="https://picsum.photos/seed/veo/1200/630" length="0" type="image/jpeg" />
+    <media:content url="https://picsum.photos/seed/veo/1200/630" medium="image" />
+  </item>
+
+  <item>
+    <title>The Rise of Autonomous Coding Agents</title>
+    <link>https://www.vetorre.com/#/news/autonomous-coding-agents</link>
+    <guid isPermaLink="false">autonomous-coding-agents</guid>
+    <pubDate>Sat, 21 Oct 2025 10:15:00 GMT</pubDate>
+    <description>New benchmarks show that autonomous AI agents are now capable of solving 65% of GitHub issues without human intervention. We explore the top tools leading this revolution.</description>
+    <content:encoded><![CDATA[<p>Software engineering is undergoing a paradigm shift. Recent benchmarks indicate that autonomous agents, powered by models like Gemini 2.5 Pro, can now navigate complex codebases, debug runtime errors, and submit pull requests autonomously.</p>]]></content:encoded>
+    <category>Coding</category>
+    <source url="https://techcrunch.com">TechDaily</source>
+    <enclosure url="https://picsum.photos/seed/coding/1200/630" length="0" type="image/jpeg" />
+    <media:content url="https://picsum.photos/seed/coding/1200/630" medium="image" />
+  </item>
+
+</channel>
+</rss>

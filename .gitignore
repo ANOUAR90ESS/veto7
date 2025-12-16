@@ -1,0 +1,135 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+.yarn/
+bower_components
+
+# Build outputs
+dist
+dist-ssr
+build
+.vite
+.next
+out
+*.local
+
+# Environment variables - SECURITY CRITICAL
+.env
+.env.*
+!.env.example
+*.env
+*.env.*
+!*.env.example
+.env.backup
+.env.production
+.env.development
+.env.local
+.env.staging
+
+# API Keys & Secrets - NEVER COMMIT
+**/config/secrets.*
+**/config/keys.*
+**/*secret*
+**/*-secret.*
+**/*_secret.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+serviceAccountKey.json
+credentials.json
+firebase-adminsdk*.json
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-debug.log
+
+# Testing
+coverage
+.nyc_output
+*.lcov
+.jest
+
+# Cache & Build artifacts
+.npm
+.eslintcache
+.cache
+.parcel-cache
+*.tsbuildinfo
+.turbo
+.vscode/settings.json
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*~
+.history
+.vimrc
+.project
+
+# Vercel & Deployment
+.vercel
+.netlify
+.firebase
+.serverless
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Backup files
+*.backup
+*.bak
+*.old
+*.orig
+
+# Temporary files
+*.tmp
+*.temp
+.temp
+.tmp
+
+# Debug files
+debug.log
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Package manager locks (optional - uncomment if needed)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

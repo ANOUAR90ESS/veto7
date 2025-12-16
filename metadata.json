@@ -1,0 +1,8 @@
+{
+  "name": "VETORRE",
+  "description": "A next-generation AI tool directory and playground powered by Gemini models including Live API, Veo, and Pro Vision.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}
