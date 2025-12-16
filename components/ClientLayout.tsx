@@ -405,6 +405,8 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
                 <button 
                   onClick={() => setIsSidebarOpen(true)} 
                   className="lg:hidden p-2 text-zinc-400 hover:text-white"
+                  aria-label="Open sidebar menu"
+                  title="Open sidebar menu"
                 >
                   <Menu className="w-6 h-6" />
                 </button>
@@ -445,6 +447,8 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
                 <button 
                     onClick={() => setShowMobileSearch(!showMobileSearch)}
                     className="md:hidden p-2 text-zinc-400 hover:text-white"
+                    aria-label="Open search"
+                    title="Open search"
                 >
                     <Search className="w-5 h-5" />
                 </button>
@@ -486,7 +490,12 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
                       autoFocus
                       className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-10 pr-10 py-3 text-white focus:border-indigo-500/50 focus:outline-none"
                     />
-                    <button onClick={() => setShowMobileSearch(false)} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500">
+                    <button 
+                      onClick={() => setShowMobileSearch(false)} 
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500"
+                      aria-label="Close search"
+                      title="Close search"
+                    >
                         <X className="w-4 h-4" />
                     </button>
                 </div>
@@ -516,7 +525,12 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
                    <div className="space-y-8 max-w-7xl mx-auto animate-in fade-in">
                         {/* Search Results Content */}
                         <div className="flex items-center gap-3 border-b border-zinc-800 pb-6">
-                            <button onClick={() => handleNavigation(AppView.HOME)} className="p-2 rounded-full hover:bg-zinc-900 text-zinc-400 hover:text-white transition-colors">
+                            <button 
+                              onClick={() => handleNavigation(AppView.HOME)} 
+                              className="p-2 rounded-full hover:bg-zinc-900 text-zinc-400 hover:text-white transition-colors"
+                              aria-label="Go back home"
+                              title="Go back home"
+                            >
                                 <ArrowLeft className="w-6 h-6" />
                             </button>
                             <div>
