@@ -612,12 +612,6 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
                         items={collections.productivity} 
                         colorClass="bg-blue-500 text-blue-500" 
                       />
-                      {tools.length === 0 && (
-                        <div className="text-center py-20 text-zinc-500">
-                           <TrendingUp className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                           <p>No tools found. Add some via the Admin Dashboard!</p>
-                        </div>
-                      )}
                     </div>
                   ) : (
                     <div className="space-y-4">
