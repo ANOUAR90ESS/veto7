@@ -13,6 +13,7 @@ import AdUnit from './AdUnit';
 import SEO from './SEO';
 import { AppView, Tool, NewsArticle, UserProfile } from '../types';
 import { intelligentSearch } from '../services/geminiService';
+import { usePageTitle } from '../services/usePageTitle';
 import { Menu, Search, AlertCircle, Star, Zap, TrendingUp, Layers, Sparkles, Gift, DollarSign, Trophy, Loader2, ArrowLeft, X } from 'lucide-react';
 import NewsModal from './NewsModal';
 import ToolInsightModal from './ToolInsightModal';
@@ -97,6 +98,9 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
 
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Automatically update page title based on current route
+  usePageTitle();
 
   // Deep Link Handling
   useEffect(() => {
