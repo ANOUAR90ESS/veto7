@@ -1057,7 +1057,7 @@ $$ language plpgsql security definer;
                     </div>
                     <div>
                         <label className="block text-sm text-zinc-400 mb-1">Description</label>
-                        <textarea required value={newTool.description} onChange={e => setNewTool({...newTool, description: e.target.value})} className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white h-24 focus:border-indigo-500 outline-none" />
+                        <textarea required value={newTool.description} onChange={e => setNewTool({...newTool, description: e.target.value})} placeholder="Describe this AI tool..." title="Tool description" aria-label="Tool description" className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white h-24 focus:border-indigo-500 outline-none" />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -1087,7 +1087,6 @@ $$ language plpgsql security definer;
                             }
                         }}
                         className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white focus:border-indigo-500 outline-none" 
-                        placeholder="Type and press Enter..."
                         />
                     </div>
                     <div>
@@ -1226,11 +1225,10 @@ $$ language plpgsql security definer;
                     min="1" 
                     max="50" 
                     value={rssImportCount}
-                    title="Number of items to import"
+                    title="Number of items to import (1-50)"
                     aria-label="Number of items to import"
                     onChange={(e) => setRssImportCount(Math.min(50, Math.max(1, parseInt(e.target.value))))}
                     className="w-16 bg-zinc-950 border border-zinc-700 rounded p-2 text-white text-center"
-                    title="Number of items to import (1-50)"
                   />
                   <button 
                     onClick={fetchRSS} 
@@ -1632,7 +1630,7 @@ $$ language plpgsql security definer;
                        </div>
                        <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
                           <div 
-                            className="h-full bg-indigo-600 rounded-full" 
+                            className="h-full bg-indigo-600 rounded-full transition-all duration-500" 
                             style={{
                               width: `${(Number(count) / Math.max(tools.length, 1)) * 100}%`
                             } as React.CSSProperties}
