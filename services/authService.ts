@@ -48,11 +48,13 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
     .eq('id', user.id)
     .single();
 
-  // EMERGENCY FALLBACK: If DB fetch fails but email matches owner, grant admin
+  // EMERGENCY FALLBACK: If DB fetch fails but email matches admin, grant admin access
+  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
+
   if (error || !profile) {
     console.warn("Error fetching profile, checking overrides:", error);
-    
-    if (user.email === 'anouares.seghyr91@gmail.com') {
+
+    if (adminEmail && user.email === adminEmail) {
         return {
             id: user.id,
             email: user.email || '',
@@ -72,8 +74,8 @@ export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
     };
   }
 
-  // Force admin for owner email if DB record exists but says user (safety check)
-  const role = (user.email === 'anouares.seghyr91@gmail.com') ? 'admin' : (profile.role as 'user' | 'admin');
+  // Force admin for configured admin email if DB record exists but says user (safety check)
+  const role = (adminEmail && user.email === adminEmail) ? 'admin' : (profile.role as 'user' | 'admin');
 
   return {
     id: user.id,

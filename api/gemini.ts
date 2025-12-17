@@ -1,11 +1,23 @@
 
 import { GoogleGenAI } from "@google/genai";
 
+// Allowed origins for CORS
+const ALLOWED_ORIGINS = [
+  'https://www.vetorre.com',
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
+
 export default async function handler(req: any, res: any) {
-  // CORS headers for handling cross-origin requests if needed
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  // CORS headers - restrict to allowed origins only
+  const origin = req.headers.origin || '';
+
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader(
     'Access-Control-Allow-Headers',
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
