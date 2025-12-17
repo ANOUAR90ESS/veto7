@@ -80,8 +80,27 @@ export const CoursePlayer: React.FC<CoursePlayerProps> = ({ course, onExit }) =>
     localStorage.setItem(storageKey, JSON.stringify(Array.from(completedItems)));
   }, [completedItems, storageKey]);
 
-  const activeModule = course.modules[activeModuleIndex];
-  const activeLesson = activeModule?.lessons[activeLessonIndex];
+  const activeModule = course?.modules?.[activeModuleIndex];
+  const activeLesson = activeModule?.lessons?.[activeLessonIndex];
+
+  // Safety check: If course has no modules, show error
+  if (!course || !course.modules || course.modules.length === 0) {
+    return (
+      <div className="w-full h-screen bg-zinc-950 flex items-center justify-center p-8">
+        <div className="max-w-md text-center">
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">Course Not Available</h2>
+          <p className="text-zinc-400 mb-6">The course content could not be loaded or is empty.</p>
+          <button
+            onClick={onExit}
+            className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Completion Helpers
   const getItemId = (type: 'lesson' | 'exercises' | 'quiz' | 'script', mIndex: number, lIndex?: number) => {

@@ -40,13 +40,17 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
       setLoading(true);
       try {
         const generatedSlides = await generateToolSlides(tool);
+        if (!generatedSlides || generatedSlides.length === 0) {
+          throw new Error("No slides were generated");
+        }
         setSlides(generatedSlides);
         // Automatically save to database if handler provided
         if (onUpdateTool) {
             onUpdateTool(tool.id, { ...tool, slides: generatedSlides });
         }
-      } catch (e) {
-        console.error(e);
+      } catch (e: any) {
+        console.error("Slides generation error:", e);
+        alert("Failed to generate slides: " + (e.message || "Unknown error"));
       } finally {
         setLoading(false);
       }
@@ -54,13 +58,17 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
       setLoading(true);
       try {
         const courseContent = await generateToolTutorial(tool);
+        if (!courseContent || courseContent.length === 0) {
+          throw new Error("No tutorial content was generated");
+        }
         setTutorialContent(courseContent);
         // Automatically save to database if handler provided
         if (onUpdateTool) {
             onUpdateTool(tool.id, { ...tool, tutorial: courseContent });
         }
-      } catch (e) {
-        console.error(e);
+      } catch (e: any) {
+        console.error("Tutorial generation error:", e);
+        alert("Failed to generate tutorial: " + (e.message || "Unknown error"));
       } finally {
         setLoading(false);
       }
@@ -71,13 +79,17 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
       setLoading(true);
       try {
           const generatedCourse = await generateFullCourse(tool);
+          if (!generatedCourse || !generatedCourse.modules || generatedCourse.modules.length === 0) {
+              throw new Error("Generated course is empty or invalid");
+          }
           setCourse(generatedCourse);
           // Automatically save to database if handler provided
           if (onUpdateTool) {
               onUpdateTool(tool.id, { ...tool, course: generatedCourse });
           }
       } catch (e: any) {
-          alert("Failed to generate course: " + e.message);
+          console.error("Course generation error:", e);
+          alert("Failed to generate course: " + (e.message || "Unknown error"));
       } finally {
           setLoading(false);
       }
@@ -213,6 +225,11 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
                    <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
                    Generating presentation...
                  </div>
+               ) : slides.length === 0 ? (
+                 <div className="flex-1 flex flex-col items-center justify-center text-zinc-500 gap-3">
+                   <MonitorPlay className="w-12 h-12 text-zinc-700" />
+                   <p>No slides available. Click the tab to generate.</p>
+                 </div>
                ) : (
                  <div className="space-y-6 animate-in slide-in-from-bottom-2 fade-in">
                    {slides.map((slide, i) => (
@@ -238,6 +255,11 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
                     <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
                     <p className="text-sm">Generating illustrated tutorial...</p>
                     <p className="text-xs text-zinc-600">This may take a moment</p>
+                  </div>
+               ) : tutorialContent.length === 0 ? (
+                  <div className="flex-1 flex flex-col items-center justify-center text-zinc-500 gap-3">
+                    <BookOpen className="w-12 h-12 text-zinc-700" />
+                    <p>No tutorial available. Click the tab to generate.</p>
                   </div>
                ) : (
                   <div className="space-y-8 animate-in slide-in-from-bottom-2 fade-in">
