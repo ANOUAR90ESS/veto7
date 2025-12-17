@@ -12,6 +12,7 @@ export interface Tool {
   price: string;
   imageUrl: string;
   website: string;
+  page?: 'free-tools' | 'paid-tools' | 'top-tools';
   // Detailed Information
   features?: string[];
   useCases?: string[];

@@ -56,6 +56,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     category: 'Writing',
     price: 'Freemium',
     website: 'https://',
+    page: 'free-tools',
     tags: [],
     features: [],
     useCases: [],
@@ -1053,6 +1054,50 @@ $$ language plpgsql security definer;
                                 </button>
                             ))}
                             </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-sm text-zinc-400 mb-2">Display Page</label>
+                        <div className="grid grid-cols-3 gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setNewTool({...newTool, page: 'free-tools'})}
+                                className={`flex items-center justify-center p-3 rounded-lg border transition-all font-medium text-sm ${
+                                    newTool.page === 'free-tools' 
+                                    ? 'bg-emerald-600/20 border-emerald-500 text-emerald-400' 
+                                    : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:bg-zinc-900 hover:border-zinc-700'
+                                }`}
+                                title="Display on Free Tools page"
+                                aria-label="Free Tools page"
+                            >
+                                Free Tools
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setNewTool({...newTool, page: 'paid-tools'})}
+                                className={`flex items-center justify-center p-3 rounded-lg border transition-all font-medium text-sm ${
+                                    newTool.page === 'paid-tools' 
+                                    ? 'bg-indigo-600/20 border-indigo-500 text-indigo-400' 
+                                    : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:bg-zinc-900 hover:border-zinc-700'
+                                }`}
+                                title="Display on Paid Tools page"
+                                aria-label="Paid Tools page"
+                            >
+                                Paid Tools
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setNewTool({...newTool, page: 'top-tools'})}
+                                className={`flex items-center justify-center p-3 rounded-lg border transition-all font-medium text-sm ${
+                                    newTool.page === 'top-tools' 
+                                    ? 'bg-orange-600/20 border-orange-500 text-orange-400' 
+                                    : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:bg-zinc-900 hover:border-zinc-700'
+                                }`}
+                                title="Display on Top Tools page"
+                                aria-label="Top Tools page"
+                            >
+                                Top Tools
+                            </button>
                         </div>
                     </div>
                     <div>
