@@ -5,12 +5,12 @@
   <link>https://www.vetorre.com</link>
   <description>The latest insights, tool reviews, and updates from the VETORRE AI Directory and Playground.</description>
   <language>en-us</language>
-  <lastBuildDate>Mon, 23 Oct 2025 09:00:00 GMT</lastBuildDate>
+  <lastBuildDate>Wed, 17 Dec 2025 09:00:00 GMT</lastBuildDate>
   <atom:link href="https://www.vetorre.com/rss.xml" rel="self" type="application/rss+xml" />
   
   <item>
     <title>Google Releases Gemini 2.5 Flash: Speed Meets Intelligence</title>
-    <link>https://www.vetorre.com/#/news/gemini-2-5-flash-release</link>
+    <link>https://www.vetorre.com/news/gemini-2-5-flash-release</link>
     <guid isPermaLink="false">gemini-2-5-flash-release</guid>
     <pubDate>Mon, 23 Oct 2025 08:00:00 GMT</pubDate>
     <description>Google has officially rolled out Gemini 2.5 Flash, boasting a 40% reduction in latency for real-time multimodal applications. Developers can now access the new 'Thinking Config' for enhanced reasoning capabilities without sacrificing speed.</description>
@@ -23,7 +23,7 @@
 
   <item>
     <title>Veo Studio: Cinematic Video Generation Now Available</title>
-    <link>https://www.vetorre.com/#/news/veo-studio-launch</link>
+    <link>https://www.vetorre.com/news/veo-studio-launch</link>
     <guid isPermaLink="false">veo-studio-launch</guid>
     <pubDate>Sun, 22 Oct 2025 14:30:00 GMT</pubDate>
     <description>VETORRE integrates Google's Veo model, allowing users to generate 1080p cinematic videos from simple text prompts. The new feature supports variable aspect ratios and image-to-video capabilities.</description>
@@ -36,7 +36,7 @@
 
   <item>
     <title>The Rise of Autonomous Coding Agents</title>
-    <link>https://www.vetorre.com/#/news/autonomous-coding-agents</link>
+    <link>https://www.vetorre.com/news/autonomous-coding-agents</link>
     <guid isPermaLink="false">autonomous-coding-agents</guid>
     <pubDate>Sat, 21 Oct 2025 10:15:00 GMT</pubDate>
     <description>New benchmarks show that autonomous AI agents are now capable of solving 65% of GitHub issues without human intervention. We explore the top tools leading this revolution.</description>
