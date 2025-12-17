@@ -96,9 +96,16 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
   };
 
   if (isPlayingCourse && course) {
+      return <CoursePlayer course={course} onExit={() => setIsPlayingCourse(false)} />;
+  }
+  
+  if (isPlayingCourse && !course) {
       return (
-          <div className="fixed inset-0 z-[100] bg-black">
-              <CoursePlayer course={course} onExit={() => setIsPlayingCourse(false)} />
+          <div className="fixed inset-0 z-[100] bg-zinc-950 flex items-center justify-center">
+              <div className="text-center">
+                  <Loader2 className="w-12 h-12 text-purple-500 animate-spin mx-auto mb-4" />
+                  <p className="text-white text-lg">Loading course...</p>
+              </div>
           </div>
       );
   }
