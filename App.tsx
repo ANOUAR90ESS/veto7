@@ -281,6 +281,36 @@ const App: React.FC = () => {
                                  />
                             </>
                     } />
+                        <Route path="/free-tools" element={
+                                <>
+                                     {mainApp}
+                                     <AuthModal 
+                                         isOpen={isAuthModalOpen} 
+                                         onClose={() => setIsAuthModalOpen(false)} 
+                                         onSuccess={handleAuthSuccess}
+                                     />
+                                </>
+                        } />
+                        <Route path="/paid-tools" element={
+                                <>
+                                     {mainApp}
+                                     <AuthModal 
+                                         isOpen={isAuthModalOpen} 
+                                         onClose={() => setIsAuthModalOpen(false)} 
+                                         onSuccess={handleAuthSuccess}
+                                     />
+                                </>
+                        } />
+                        <Route path="/top-tools" element={
+                                <>
+                                     {mainApp}
+                                     <AuthModal 
+                                         isOpen={isAuthModalOpen} 
+                                         onClose={() => setIsAuthModalOpen(false)} 
+                                         onSuccess={handleAuthSuccess}
+                                     />
+                                </>
+                        } />
                     <Route path="/news/*" element={
                             <>
                                  {mainApp}
@@ -291,6 +321,16 @@ const App: React.FC = () => {
                                  />
                             </>
                     } />
+                        <Route path="/profile" element={
+                                <>
+                                     {mainApp}
+                                     <AuthModal 
+                                         isOpen={isAuthModalOpen} 
+                                         onClose={() => setIsAuthModalOpen(false)} 
+                                         onSuccess={handleAuthSuccess}
+                                     />
+                                </>
+                        } />
         
                     {/* 404 Catch-All */}
                     <Route path="*" element={<NotFoundPage />} />
