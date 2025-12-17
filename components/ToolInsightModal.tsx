@@ -322,6 +322,18 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
                            </button>
                            {loading && <p className="text-xs text-zinc-500 animate-pulse">Using Gemini 2.5 Flash to structure learning path...</p>}
                        </div>
+                   ) : !course.modules || course.modules.length === 0 ? (
+                       <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
+                           <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
+                           <h3 className="text-xl font-bold text-white mb-2">Course Generation Failed</h3>
+                           <p className="text-zinc-400 mb-6">The course content could not be generated properly.</p>
+                           <button 
+                               onClick={() => { setCourse(null); handleGenerateCourse(); }}
+                               className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors"
+                           >
+                               Try Again
+                           </button>
+                       </div>
                    ) : (
                        <div className="space-y-6 animate-in fade-in">
                            <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6">
@@ -331,7 +343,13 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
                                    <span>~{course.totalDurationHours} Hours</span>
                                </div>
                                <button 
-                                   onClick={() => setIsPlayingCourse(true)}
+                                   onClick={() => {
+                                       if (course && course.modules && course.modules.length > 0) {
+                                           setIsPlayingCourse(true);
+                                       } else {
+                                           alert("Course content is not available. Please try regenerating the course.");
+                                       }
+                                   }}
                                    className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg flex items-center justify-center gap-2 transition-colors"
                                >
                                    <Play className="w-5 h-5 fill-current" /> Start Learning
