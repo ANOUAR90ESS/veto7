@@ -15,15 +15,21 @@ interface ToolInsightModalProps {
 const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 'summary', onClose, onUpdateTool }) => {
   const [activeTab, setActiveTab] = useState<'summary' | 'slides' | 'tutorial' | 'course'>(initialTab);
   
+  // Track if data already exists in tool prop (from database) - prevents re-generation
+  const hasExistingSlides = Array.isArray(tool.slides) && tool.slides.length > 0;
+  const hasExistingTutorial = Array.isArray(tool.tutorial) && tool.tutorial.length > 0;
+  const hasExistingCourse = tool.course && 
+    typeof tool.course === 'object' && 
+    'modules' in tool.course && 
+    Array.isArray(tool.course.modules) && 
+    tool.course.modules.length > 0;
+  
   // Initialize with saved data if available - ensure they are always arrays
   const [slides, setSlides] = useState<Slide[]>(Array.isArray(tool.slides) ? tool.slides : []);
   const [tutorialContent, setTutorialContent] = useState<TutorialSection[]>(Array.isArray(tool.tutorial) ? tool.tutorial : []);
   
   // Initialize course with better validation
-  const validCourse = tool.course && 
-    typeof tool.course === 'object' && 
-    'modules' in tool.course && 
-    Array.isArray(tool.course.modules) ? tool.course : null;
+  const validCourse = hasExistingCourse ? tool.course : null;
   const [course, setCourse] = useState<Course | null>(validCourse);
   
   const [loading, setLoading] = useState(false);
@@ -41,8 +47,8 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
   const handleTabChange = async (tab: 'summary' | 'slides' | 'tutorial' | 'course') => {
     setActiveTab(tab);
     
-    // Only generate if data is missing from both prop and state
-    if (tab === 'slides' && slides.length === 0) {
+    // Only generate if data does NOT already exist in the tool (not saved to DB yet)
+    if (tab === 'slides' && !hasExistingSlides) {
       setLoading(true);
       try {
         const generatedSlides = await generateToolSlides(tool);
@@ -60,7 +66,7 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
       } finally {
         setLoading(false);
       }
-    } else if (tab === 'tutorial' && tutorialContent.length === 0) {
+    } else if (tab === 'tutorial' && !hasExistingTutorial) {
       setLoading(true);
       try {
         const courseContent = await generateToolTutorial(tool);
@@ -82,6 +88,12 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
   };
 
   const handleGenerateCourse = async () => {
+      // Don't regenerate if course already exists
+      if (hasExistingCourse) {
+          console.log("Course already exists, skipping generation");
+          return;
+      }
+      
       setLoading(true);
       try {
           const generatedCourse = await generateFullCourse(tool);
@@ -152,18 +164,21 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
             className={`flex-1 min-w-[100px] py-3 text-sm font-medium flex items-center justify-center gap-2 transition-colors border-b-2 ${activeTab === 'slides' ? 'text-white border-indigo-500 bg-zinc-900' : 'text-zinc-500 border-transparent hover:text-zinc-300'}`}
           >
             <MonitorPlay className="w-4 h-4" /> Slides
+            {hasExistingSlides && <CheckCircle className="w-3 h-3 text-green-500" />}
           </button>
           <button 
             onClick={() => handleTabChange('tutorial')}
             className={`flex-1 min-w-[100px] py-3 text-sm font-medium flex items-center justify-center gap-2 transition-colors border-b-2 ${activeTab === 'tutorial' ? 'text-white border-indigo-500 bg-zinc-900' : 'text-zinc-500 border-transparent hover:text-zinc-300'}`}
           >
             <BookOpen className="w-4 h-4" /> Tutorial
+            {hasExistingTutorial && <CheckCircle className="w-3 h-3 text-green-500" />}
           </button>
           <button 
             onClick={() => handleTabChange('course')}
             className={`flex-1 min-w-[100px] py-3 text-sm font-medium flex items-center justify-center gap-2 transition-colors border-b-2 ${activeTab === 'course' ? 'text-white border-indigo-500 bg-zinc-900' : 'text-zinc-500 border-transparent hover:text-zinc-300'}`}
           >
             <GraduationCap className="w-4 h-4" /> Course
+            {hasExistingCourse && <CheckCircle className="w-3 h-3 text-green-500" />}
           </button>
         </div>
 
@@ -340,11 +355,25 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
                            </div>
                            <button 
                                onClick={handleGenerateCourse}
-                               disabled={loading}
+                               disabled={loading || hasExistingCourse}
                                className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-zinc-200 transition-transform active:scale-95 disabled:opacity-70 disabled:scale-100 flex items-center gap-2"
                            >
-                               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5 text-indigo-600" />}
-                               {loading ? 'Designing Curriculum...' : 'Generate Course'}
+                               {hasExistingCourse ? (
+                                   <>
+                                       <CheckCircle className="w-5 h-5 text-green-500" />
+                                       Course Generated
+                                   </>
+                               ) : loading ? (
+                                   <>
+                                       <Loader2 className="w-5 h-5 animate-spin" />
+                                       Designing Curriculum...
+                                   </>
+                               ) : (
+                                   <>
+                                       <Sparkles className="w-5 h-5 text-indigo-600" />
+                                       Generate Course
+                                   </>
+                               )}
                            </button>
                            {loading && <p className="text-xs text-zinc-500 animate-pulse">Using Gemini 2.5 Flash to structure learning path...</p>}
                        </div>
