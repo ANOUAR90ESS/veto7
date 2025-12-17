@@ -270,34 +270,39 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
         return matchesSearch && matchesCategory;
      });
 
-    // 2. Apply Page-Specific Logic (Automatic Free/Paid Sorting)
+    // 2. Apply Page-Specific Logic (Using 'page' field from admin panel)
     switch (view) {
         case AppView.FREE_TOOLS:
+            // Filter tools where page field is 'free-tools' OR fallback to old price logic for legacy tools
             return filtered.filter(t => {
+                if (t.page) return t.page === 'free-tools';
+                // Fallback for tools without page field
                 const p = (t.price || '').toLowerCase();
-                // Include explicit free types, trials, open source, and "Freemium"
                 return p.includes('free') || p.includes('0') || p.includes('trial') || p.includes('open source') || p.includes('waitlist') || p.includes('community') || p.includes('freemium');
             });
         case AppView.PAID_TOOLS:
+            // Filter tools where page field is 'paid-tools' OR fallback to old price logic for legacy tools
             return filtered.filter(t => {
+                if (t.page) return t.page === 'paid-tools';
+                // Fallback for tools without page field
                 const p = (t.price || '').toLowerCase();
-                
-                // Indicators of payment
                 const hasCurrency = p.includes('$') || p.includes('€') || p.includes('£');
                 const hasPaidWords = p.includes('paid') || p.includes('pro') || p.includes('premium') || p.includes('subscription') || p.includes('billing') || p.includes('purchase') || p.includes('enterprise') || p.includes('pricing');
-                const isFreemium = p.includes('freemium'); // Freemium implies a paid tier exists, so we include it here too for maximum visibility
-                
-                // Strictly exclude items that are JUST "free" or "open source" without paid signals
+                const isFreemium = p.includes('freemium');
                 if (p === 'free' || p === 'open source' || p === 'free trial') return false;
-
-                // Match if currency, paid keywords, freemium, or contains digits (usually price)
                 return hasCurrency || hasPaidWords || isFreemium || (p.match(/\d/) && !p.includes('0'));
             });
         case AppView.TOP_TOOLS:
-            // For now, "Top" is simulated by tools tagged "Featured" OR randomly picking the first 8 for demo purposes
-            // In a real app, this would sort by views/ratings.
-            return filtered.filter(t => (t.tags || []).includes('Featured')).length > 0 
-                ? filtered.filter(t => (t.tags || []).includes('Featured'))
+            // Filter tools where page field is 'top-tools' OR fallback to Featured tag for legacy tools
+            return filtered.filter(t => {
+                if (t.page) return t.page === 'top-tools';
+                // Fallback for tools without page field
+                return (t.tags || []).includes('Featured');
+            }).length > 0 
+                ? filtered.filter(t => {
+                    if (t.page) return t.page === 'top-tools';
+                    return (t.tags || []).includes('Featured');
+                })
                 : filtered.slice(0, 8); 
         case AppView.HOME:
         default:
