@@ -228,9 +228,10 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
            {activeTab === 'slides' && (
              <div className="h-full flex flex-col">
                {loading ? (
-                 <div className="flex-1 flex flex-col items-center justify-center text-zinc-500 gap-3">
+                 <div className="flex-1 flex flex-col items-center justify-center text-zinc-500 gap-3 bg-gradient-to-b from-zinc-900 to-zinc-950">
                    <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-                   Generating presentation...
+                   <p className="text-white font-medium">Generating presentation...</p>
+                   <p className="text-xs text-zinc-500">This may take a moment</p>
                  </div>
                ) : slides.length === 0 ? (
                  <div className="flex-1 flex flex-col items-center justify-center text-zinc-500 gap-3">
@@ -258,10 +259,10 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
            {activeTab === 'tutorial' && (
              <div className="h-full flex flex-col">
                {loading ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-zinc-500 gap-3">
+                  <div className="flex-1 flex flex-col items-center justify-center text-zinc-500 gap-3 bg-gradient-to-b from-zinc-900 to-zinc-950">
                     <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-                    <p className="text-sm">Generating illustrated tutorial...</p>
-                    <p className="text-xs text-zinc-600">This may take a moment</p>
+                    <p className="text-white font-medium">Generating illustrated tutorial...</p>
+                    <p className="text-xs text-zinc-500">This may take a moment</p>
                   </div>
                ) : tutorialContent.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-zinc-500 gap-3">
@@ -301,7 +302,15 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
 
            {activeTab === 'course' && (
                <div className="h-full flex flex-col">
-                   {!course ? (
+                   {loading ? (
+                       <div className="flex-1 flex flex-col items-center justify-center text-center p-8 space-y-6 bg-gradient-to-b from-zinc-900 to-zinc-950">
+                           <Loader2 className="w-12 h-12 animate-spin text-indigo-500 mx-auto" />
+                           <div>
+                               <p className="text-white font-medium text-lg mb-2">Designing Curriculum...</p>
+                               <p className="text-xs text-zinc-500">Using Gemini 2.5 Flash to structure learning path...</p>
+                           </div>
+                       </div>
+                   ) : !course ? (
                        <div className="flex-1 flex flex-col items-center justify-center text-center p-8 space-y-6">
                            <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/30">
                                <GraduationCap className="w-10 h-10 text-white" />
