@@ -139,41 +139,86 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
       }
   }, [news, selectedNewsResult]);
 
-  // Dynamic SEO Data Logic
-  const getSEOData = () => {
+    // Dynamic SEO Data Logic
+    const getSEOData = () => {
     let title = "VETORRE - AI Tool Directory & Studio";
     let desc = "Discover next-gen AI tools, generate cinematic videos with Veo, and create instant visual courses. The ultimate AI playground powered by Gemini.";
     
     switch(currentView) {
-        case AppView.FREE_TOOLS:
-            title = "Free AI Tools - VETORRE";
-            desc = "Explore the best free and open-source AI tools available today.";
-            break;
-        case AppView.PAID_TOOLS:
-            title = "Premium AI Tools - VETORRE";
-            desc = "Professional grade AI software for enterprise and power users.";
-            break;
-        case AppView.TOP_TOOLS:
-            title = "Top Rated AI Tools - VETORRE";
-            desc = "The most popular and highly rated AI tools curated for you.";
-            break;
-        case AppView.LATEST_NEWS:
-            title = "Latest AI News - VETORRE";
-            desc = "Stay updated with the latest breakthroughs in Artificial Intelligence.";
-            break;
-        case AppView.SEARCH_RESULTS:
-            title = `Search: ${searchTerm} - VETORRE`;
-            desc = `AI-powered search results for "${searchTerm}" on VETORRE.`;
-            break;
-        case AppView.PRICING:
-            title = "Pricing - VETORRE";
-            break;
-        case AppView.PROFILE:
-            title = "My Profile - VETORRE";
-            break;
+      case AppView.FREE_TOOLS:
+        title = "Free AI Tools - VETORRE";
+        desc = "Explore the best free and open-source AI tools available today.";
+        break;
+      case AppView.PAID_TOOLS:
+        title = "Premium AI Tools - VETORRE";
+        desc = "Professional grade AI software for enterprise and power users.";
+        break;
+      case AppView.TOP_TOOLS:
+        title = "Top Rated AI Tools - VETORRE";
+        desc = "The most popular and highly rated AI tools curated for you.";
+        break;
+      case AppView.LATEST_NEWS:
+        title = "Latest AI News - VETORRE";
+        desc = "Stay updated with the latest breakthroughs in Artificial Intelligence.";
+        break;
+      case AppView.SEARCH_RESULTS:
+        title = `Search: ${searchTerm} - VETORRE`;
+        desc = `AI-powered search results for "${searchTerm}" on VETORRE.`;
+        break;
+      case AppView.PRICING:
+        title = "Pricing - VETORRE";
+        break;
+      case AppView.PROFILE:
+        title = "My Profile - VETORRE";
+        break;
     }
-    return { title, desc };
-  };
+
+    // Build keyword/topic pool for better discoverability
+    const keywordSet = new Set<string>([
+      'AI tools directory',
+      'AI tool features',
+      'AI tool courses',
+      'AI tutorials',
+      'AI slides',
+      'Gemini AI tools',
+      'VETORRE platform',
+      'AI tool reviews',
+      'AI tool pricing'
+    ]);
+
+    tools.forEach(t => {
+      keywordSet.add(t.name);
+      keywordSet.add(t.category);
+      (t.tags || []).forEach(tag => keywordSet.add(tag));
+      (t.features || []).forEach(f => keywordSet.add(f));
+      (t.useCases || []).forEach(u => keywordSet.add(u));
+      if (t.price?.toLowerCase().includes('free')) keywordSet.add('free ai tools');
+    });
+
+    if (searchTerm) keywordSet.add(searchTerm);
+
+    const keywords = Array.from(keywordSet).filter(Boolean).slice(0, 40);
+    const topics = keywords.slice(0, 20);
+
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const toolList = (tools || []).slice(0, 10).map((t, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      name: t.name,
+      description: t.description,
+      url: t.website || `${origin}/#tool-${t.id}`
+    }));
+
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: "VETORRE AI Tools Directory",
+      description: desc,
+      itemListElement: toolList
+    };
+
+    return { title, desc, keywords, topics, structuredData };
+    };
 
   const seoData = getSEOData();
 
@@ -390,7 +435,13 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({
 
   return (
     <div className="flex min-h-screen bg-black text-zinc-100">
-      <SEO title={seoData.title} description={seoData.desc} />
+      <SEO 
+        title={seoData.title} 
+        description={seoData.desc} 
+        keywords={seoData.keywords}
+        topics={seoData.topics}
+        structuredData={seoData.structuredData}
+      />
       
       <Sidebar 
         currentView={currentView} 

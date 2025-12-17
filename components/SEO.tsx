@@ -7,6 +7,9 @@ interface SEOProps {
   image?: string;
   url?: string;
   type?: string;
+  keywords?: string[];
+  topics?: string[];
+  structuredData?: any | any[];
 }
 
 const SEO: React.FC<SEOProps> = ({ 
@@ -14,8 +17,11 @@ const SEO: React.FC<SEOProps> = ({
   description, 
   // Professional Abstract AI Network Image (Dark Blue/Purple Theme)
   image = "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1200&auto=format&fit=crop", 
-  url = window.location.href,
-  type = 'website'
+  url = typeof window !== 'undefined' ? window.location.href : '',
+  type = 'website',
+  keywords = [],
+  topics = [],
+  structuredData
 }) => {
   useEffect(() => {
     // 1. Update Title
@@ -41,8 +47,29 @@ const SEO: React.FC<SEOProps> = ({
       element.setAttribute('content', content);
     };
 
+    const removeNodeById = (id: string) => {
+      const existing = document.getElementById(id);
+      if (existing) existing.remove();
+    };
+
+    const updateStructuredData = (data: any | any[]) => {
+      removeNodeById('seo-structured-data');
+      if (!data) return;
+      const script = document.createElement('script');
+      script.id = 'seo-structured-data';
+      script.type = 'application/ld+json';
+      script.text = JSON.stringify(data);
+      document.head.appendChild(script);
+    };
+
     // 3. Update Standard Meta
     updateMeta('meta[name="description"]', description);
+
+    // 3b. Keywords & Topics (helps with intent-based discovery)
+    const keywordList = Array.from(new Set([...(keywords || []), ...(topics || [])])).filter(Boolean);
+    if (keywordList.length) {
+      updateMeta('meta[name="keywords"]', keywordList.join(', '));
+    }
 
     // 4. Update Open Graph
     updateMeta('meta[property="og:title"]', title);
@@ -57,7 +84,10 @@ const SEO: React.FC<SEOProps> = ({
     updateMeta('meta[name="twitter:image"]', image);
     updateMeta('meta[name="twitter:card"]', 'summary_large_image');
 
-  }, [title, description, image, url, type]);
+    // 6. Structured Data (JSON-LD)
+    updateStructuredData(structuredData);
+
+  }, [title, description, image, url, type, keywords, topics, structuredData]);
 
   return null;
 };
