@@ -13,10 +13,13 @@ interface NewsFeedProps {
 const NewsFeed: React.FC<NewsFeedProps> = ({ articles, initialArticleId, onUpdateArticle }) => {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
 
+  // Ensure articles is always an array
+  const safeArticles = Array.isArray(articles) ? articles : [];
+
   // Deep Link Handling
   useEffect(() => {
-    if (initialArticleId && articles.length > 0) {
-      const article = articles.find(a => a.id === initialArticleId);
+    if (initialArticleId && safeArticles.length > 0) {
+      const article = safeArticles.find(a => a.id === initialArticleId);
       if (article) {
         setSelectedArticle(article);
       }
@@ -26,12 +29,12 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ articles, initialArticleId, onUpdat
   // Sync selected article with live data (e.g. after image generation)
   useEffect(() => {
       if (selectedArticle) {
-          const fresh = articles.find(a => a.id === selectedArticle.id);
+          const fresh = safeArticles.find(a => a.id === selectedArticle.id);
           if (fresh && fresh.imageUrl !== selectedArticle.imageUrl) {
               setSelectedArticle(fresh);
           }
       }
-  }, [articles, selectedArticle]);
+  }, [safeArticles, selectedArticle]);
 
   const handleShare = (e: React.MouseEvent, article: NewsArticle) => {
       e.stopPropagation();
@@ -60,7 +63,7 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ articles, initialArticleId, onUpdat
         </div>
       </div>
 
-      {articles.length === 0 ? (
+      {safeArticles.length === 0 ? (
         <div className="text-center py-20 bg-zinc-900/30 rounded-2xl border border-zinc-800 mx-4 md:mx-0">
           <Newspaper className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
           <h3 className="text-xl font-medium text-zinc-300">No news yet</h3>
@@ -69,7 +72,7 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ articles, initialArticleId, onUpdat
       ) : (
         /* Changed grid-cols-2 to grid-cols-1 for mobile to make cards larger */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 md:px-0">
-          {articles.map((article) => (
+          {safeArticles.map((article) => (
             <div key={article.id} className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden hover:border-purple-500/50 transition-all group flex flex-col h-full hover:shadow-xl hover:shadow-purple-900/10">
               <div className="aspect-video overflow-hidden bg-zinc-950 relative cursor-pointer" onClick={() => setSelectedArticle(article)}>
                 <img 

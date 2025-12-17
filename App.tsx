@@ -49,7 +49,9 @@ const App: React.FC = () => {
 
   // Use Supabase data if available, otherwise fallback to local
   const displayTools = isSupabaseConfigured ? tools : localTools;
-  const displayNews = isSupabaseConfigured ? news : localNews;
+  const displayNews = Array.isArray(isSupabaseConfigured ? news : localNews) 
+    ? (isSupabaseConfigured ? news : localNews) 
+    : [];
 
   useEffect(() => {
     // Check if Supabase is configured
