@@ -18,7 +18,13 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
   // Initialize with saved data if available - ensure they are always arrays
   const [slides, setSlides] = useState<Slide[]>(Array.isArray(tool.slides) ? tool.slides : []);
   const [tutorialContent, setTutorialContent] = useState<TutorialSection[]>(Array.isArray(tool.tutorial) ? tool.tutorial : []);
-  const [course, setCourse] = useState<Course | null>(tool.course || null);
+  
+  // Initialize course with better validation
+  const validCourse = tool.course && 
+    typeof tool.course === 'object' && 
+    'modules' in tool.course && 
+    Array.isArray(tool.course.modules) ? tool.course : null;
+  const [course, setCourse] = useState<Course | null>(validCourse);
   
   const [loading, setLoading] = useState(false);
   const hasLoadedRef = useRef(false);
@@ -79,16 +85,27 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
       setLoading(true);
       try {
           const generatedCourse = await generateFullCourse(tool);
-          if (!generatedCourse || !Array.isArray(generatedCourse.modules) || generatedCourse.modules.length === 0) {
-              throw new Error("Generated course is empty or invalid");
+          
+          // Comprehensive validation of generated course
+          if (!generatedCourse || 
+              typeof generatedCourse !== 'object' ||
+              !('modules' in generatedCourse) ||
+              !Array.isArray(generatedCourse.modules) || 
+              generatedCourse.modules.length === 0) {
+              console.error("Invalid course structure:", generatedCourse);
+              throw new Error("Generated course is empty or has invalid structure");
           }
+          
+          console.log("Course generated successfully with", generatedCourse.modules.length, "modules");
           setCourse(generatedCourse);
+          
           // Automatically save to database if handler provided
           if (onUpdateTool) {
               onUpdateTool(tool.id, { ...tool, course: generatedCourse });
           }
       } catch (e: any) {
           console.error("Course generation error:", e);
+          setCourse(null);
           alert("Failed to generate course: " + (e.message || "Unknown error"));
       } finally {
           setLoading(false);
@@ -331,7 +348,7 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
                            </button>
                            {loading && <p className="text-xs text-zinc-500 animate-pulse">Using Gemini 2.5 Flash to structure learning path...</p>}
                        </div>
-                   ) : !course.modules || course.modules.length === 0 ? (
+                   ) : !course || !course.modules || !Array.isArray(course.modules) || course.modules.length === 0 ? (
                        <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
                            <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
                            <h3 className="text-xl font-bold text-white mb-2">Course Generation Failed</h3>
@@ -346,14 +363,14 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
                    ) : (
                        <div className="space-y-6 animate-in fade-in">
                            <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6">
-                               <h3 className="text-2xl font-bold text-white mb-2">{course.title}</h3>
+                               <h3 className="text-2xl font-bold text-white mb-2">{course?.title || "Course"}</h3>
                                <div className="flex gap-4 text-sm text-zinc-400 mb-6">
-                                   <span>{course.modules.length} Modules</span>
-                                   <span>~{course.totalDurationHours} Hours</span>
+                                   <span>{Array.isArray(course?.modules) ? course.modules.length : 0} Modules</span>
+                                   <span>~{course?.totalDurationHours || 0} Hours</span>
                                </div>
                                <button 
                                    onClick={() => {
-                                       if (course && course.modules && course.modules.length > 0) {
+                                       if (course && Array.isArray(course.modules) && course.modules.length > 0) {
                                            setIsPlayingCourse(true);
                                        } else {
                                            alert("Course content is not available. Please try regenerating the course.");
@@ -368,7 +385,7 @@ const ToolInsightModal: React.FC<ToolInsightModalProps> = ({ tool, initialTab = 
                            <div>
                                <h4 className="text-sm font-bold text-zinc-500 uppercase mb-3">Curriculum</h4>
                                <div className="space-y-2">
-                                   {course.modules.map((mod, i) => (
+                                   {Array.isArray(course?.modules) && course.modules.map((mod, i) => (
                                        <div key={i} className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800 flex justify-between items-center">
                                            <div>
                                                <div className="text-xs text-indigo-400 font-bold mb-1">MODULE {i+1}</div>
