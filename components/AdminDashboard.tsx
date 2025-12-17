@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tool, NewsArticle, UserProfile } from '../types';
 import { Plus, Rss, Save, Loader2, AlertCircle, Newspaper, Image as ImageIcon, Upload, Wand2, Link, LayoutGrid, Eye, X, Trash2, BarChart3, TrendingUp, PieChart, PenTool, Video, Mic, Code, Briefcase, Check, Sparkles, Pencil, ArrowLeft, CheckCircle, ListTodo, ShieldAlert, Filter, ArrowUpDown, Globe, Database, Copy, BookOpen, GraduationCap, MonitorPlay } from 'lucide-react';
@@ -32,6 +32,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'create' | 'rss' | 'news' | 'manage' | 'analyze' | 'database'>('create');
+  
+  // Add noindex meta tag for admin panel
+  useEffect(() => {
+    const meta = document.createElement('meta');
+    meta.name = 'robots';
+    meta.content = 'noindex, nofollow';
+    document.head.appendChild(meta);
+    
+    return () => {
+      document.head.removeChild(meta);
+    };
+  }, []);
   
   // State to track if we are editing an existing item
   const [editingId, setEditingId] = useState<string | null>(null);

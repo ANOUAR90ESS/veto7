@@ -75,12 +75,4 @@
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
-
-  <!-- Admin Page (no indexing needed, but included for completeness) -->
-  <url>
-    <loc>https://www.vetorre.com/admin</loc>
-    <lastmod>2025-12-17</lastmod>
-    <changefreq>never</changefreq>
-    <priority>0.3</priority>
-  </url>
 </urlset>

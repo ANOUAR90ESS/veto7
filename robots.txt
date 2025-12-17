@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/*
 
 Sitemap: https://www.vetorre.com/sitemap.xml
+Sitemap: https://www.vetorre.com/rss.xml
