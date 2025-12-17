@@ -13,6 +13,7 @@ import DatabaseTab from './admin/tabs/DatabaseTab';
 import AnalyzeTab from './admin/tabs/AnalyzeTab';
 import ManageTab from './admin/tabs/ManageTab';
 import ToolCreateTab from './admin/tabs/ToolCreateTab';
+import NewsCreateTab from './admin/tabs/NewsCreateTab';
 
 interface AdminDashboardProps {
   tools: Tool[];
@@ -56,12 +57,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Tool Edit State (form state now managed by ToolCreateTab)
   const [editingToolData, setEditingToolData] = useState<Partial<Tool> | undefined>(undefined);
 
-  // News Generator State
-  const [newsGenInput, setNewsGenInput] = useState('');
-  const [isGenNewsSingle, setIsGenNewsSingle] = useState(false);
-  const [isGenNewsBatch, setIsGenNewsBatch] = useState(false);
-  const [newsGenCount, setNewsGenCount] = useState(3);
-  const [newsReviewQueue, setNewsReviewQueue] = useState<NewsArticle[]>([]);
+  // News Edit State (form state now managed by NewsCreateTab)
+  const [editingNewsData, setEditingNewsData] = useState<Partial<NewsArticle> | undefined>(undefined);
 
   // RSS State
   const [rssUrl, setRssUrl] = useState('https://feeds.feedburner.com/TechCrunch/');
@@ -71,20 +68,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [rssError, setRssError] = useState('');
 
-  // News Create State
-  const [newNews, setNewNews] = useState<Partial<NewsArticle>>({
-    title: '',
-    description: '',
-    content: '',
-    source: '',
-    imageUrl: '',
-    category: 'Technology'
-  });
-  const [imageMode, setImageMode] = useState<'url' | 'upload' | 'generate'>('url');
-  const [generatingImg, setGeneratingImg] = useState(false);
+  // News Categories State (still needed for NewsCreateTab)
   const [newsCategories, setNewsCategories] = useState(['Technology', 'Business', 'Innovation', 'Startup', 'Research', 'AI Model']);
-  const [newCategoryInput, setNewCategoryInput] = useState('');
-  const [showAddCategory, setShowAddCategory] = useState(false);
 
   // Preview State
   const [previewItem, setPreviewItem] = useState<{ type: 'tool' | 'news', data: any } | null>(null);
@@ -203,10 +188,9 @@ $$ language plpgsql security definer;
   };
 
   const resetNewsForm = () => {
-      setNewNews({ title: '', description: '', content: '', source: '', imageUrl: '', category: 'Technology' });
-      setImageMode('url');
       setEditingId(null);
-      setNewsGenInput('');
+      setEditingNewsData(undefined);
+      setLastSuccess(null);
   };
 
   const startEditingTool = (tool: Tool) => {
@@ -218,7 +202,7 @@ $$ language plpgsql security definer;
   };
 
   const startEditingNews = (article: NewsArticle) => {
-      setNewNews(article);
+      setEditingNewsData(article);
       setEditingId(article.id);
       setActiveTab('news');
       setLastSuccess(null);
@@ -227,54 +211,17 @@ $$ language plpgsql security definer;
 
   // Tool handlers now in ToolCreateTab component
 
-  // --- News Generation ---
-  const handleGenerateNewsCandidates = async () => {
-      setIsGenNewsBatch(true);
-      try {
-          const generatedNews = await generateDirectoryNews(newsGenCount);
-          setNewsReviewQueue(prev => [...generatedNews, ...prev]);
-          setLastSuccess(null);
-      } catch(e: any) {
-          alert("Batch news generation failed: " + e.message);
-      } finally {
-          setIsGenNewsBatch(false);
-      }
+  // News handlers now in NewsCreateTab component
+
+  const handleNewsAdded = (article: NewsArticle) => {
+    setLastSuccess({ type: 'news', data: article });
+    resetNewsForm();
   };
 
-  const handleGenerateSingleNews = async () => {
-      if(!newsGenInput.trim()) return;
-      setIsGenNewsSingle(true);
-      try {
-          const generatedNews = await generateNewsDetails(newsGenInput);
-          setNewNews(prev => ({ ...prev, ...generatedNews }));
-      } catch(e: any) {
-          alert("News generation failed: " + e.message);
-      } finally {
-          setIsGenNewsSingle(false);
-      }
-  };
-  
-  const handlePublishReviewNews = (article: NewsArticle) => {
-      onAddNews(article);
-      setNewsReviewQueue(prev => prev.filter(n => n.id !== article.id));
-      setLastSuccess({ type: 'news', data: article });
-  };
-  
-  const handleEditReviewNews = (article: NewsArticle) => {
-      setNewNews(article);
-      setNewsReviewQueue(prev => prev.filter(n => n.id !== article.id));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-  
-  const handleDiscardReviewNews = (id: string) => {
-      setNewsReviewQueue(prev => prev.filter(n => n.id !== id));
-  };
-
-  const handlePublishAllNews = () => {
-      if(confirm(`Publish all ${newsReviewQueue.length} articles?`)) {
-          newsReviewQueue.forEach(n => onAddNews(n));
-          setNewsReviewQueue([]);
-      }
+  const handleAddNewsCategory = (category: string) => {
+    if (category && !newsCategories.includes(category)) {
+      setNewsCategories(prev => [...prev, category]);
+    }
   };
 
   // handleCreateSubmit moved to ToolCreateTab component
@@ -284,40 +231,9 @@ $$ language plpgsql security definer;
     resetToolForm();
   };
 
-  // Re-declare necessary handlers
-  const handleNewsSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newNews.title || !newNews.content) return;
+  // handleNewsSubmit moved to NewsCreateTab component
 
-    const article: NewsArticle = {
-      id: editingId || newNews.id || '',
-      title: newNews.title || "Untitled",
-      description: newNews.description || "",
-      content: newNews.content || "",
-      source: newNews.source || "VETORRE Blog",
-      category: newNews.category || "General",
-      imageUrl: newNews.imageUrl || `https://picsum.photos/seed/${newNews.title}/800/400`,
-      date: new Date().toISOString()
-    };
-
-    if (editingId) {
-        onUpdateNews(editingId, article);
-    } else {
-        onAddNews(article);
-    }
-
-    setLastSuccess({ type: 'news', data: article });
-    resetNewsForm();
-  };
-
-  const handleAddNewsCategory = () => {
-    if (newCategoryInput && !newsCategories.includes(newCategoryInput)) {
-        setNewsCategories(prev => [...prev, newCategoryInput]);
-        setNewNews(prev => ({ ...prev, category: newCategoryInput }));
-        setNewCategoryInput('');
-        setShowAddCategory(false);
-    }
-  };
+  // handleAddNewsCategory moved to NewsCreateTab component
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -790,161 +706,22 @@ $$ language plpgsql security definer;
        )}
 
        {activeTab === 'news' && (
-          <div className="space-y-6 animate-in fade-in duration-300">
-             {/* News Generation UI... */}
-             {!editingId && (
-                <div className="space-y-6">
-                   <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div>
-                            <h3 className="text-lg font-medium text-white flex items-center gap-2">
-                                <Globe className="w-5 h-5 text-purple-400" />
-                                Find Real Trending News
-                            </h3>
-                            <p className="text-sm text-zinc-400 mt-1">
-                                AI will Search the web for current events and generate reports.
-                            </p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <input 
-                                type="number" 
-                                min="1" 
-                                max="50" 
-                                value={newsGenCount}
-                                onChange={(e) => setNewsGenCount(Math.min(50, Math.max(1, parseInt(e.target.value))))}
-                                className="w-16 bg-black/40 border border-purple-500/30 rounded-lg px-2 py-2 text-white text-center text-sm focus:outline-none focus:border-purple-500"
-                                title="Number of articles to generate (1-50)"
-                            />
-                            <button
-                                onClick={handleGenerateNewsCandidates}
-                                disabled={isGenNewsBatch}
-                                className="shrink-0 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2 px-6 rounded-lg flex items-center gap-2 transition-all disabled:opacity-50"
-                            >
-                                {isGenNewsBatch ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                                <span>Find News</span>
-                            </button>
-                        </div>
-                   </div>
-
-                   <div className="bg-gradient-to-br from-purple-900/20 to-indigo-900/20 border border-purple-500/20 rounded-xl p-6">
-                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center">
-                                <Newspaper className="w-5 h-5 text-white" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-bold text-white">AI News Reporter</h3>
-                                <p className="text-xs text-purple-200/70">Enter a real topic, and AI will research (Google Search) and write a factual story.</p>
-                            </div>
-                         </div>
-                         <div className="flex gap-2">
-                            <input 
-                                value={newsGenInput}
-                                onChange={(e) => setNewsGenInput(e.target.value)}
-                                placeholder="e.g., Apple vision pro release, SpaceX mission..."
-                                className="flex-1 bg-black/40 border border-purple-500/30 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500"
-                                onKeyDown={(e) => e.key === 'Enter' && handleGenerateSingleNews()}
-                            />
-                            <button 
-                                onClick={handleGenerateSingleNews}
-                                disabled={isGenNewsSingle || !newsGenInput}
-                                className="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-6 rounded-lg font-medium flex items-center gap-2 disabled:opacity-50 transition-colors"
-                            >
-                                {isGenNewsSingle ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
-                                Write
-                            </button>
-                         </div>
-                    </div>
-                </div>
-             )}
-
-            <div className={`bg-zinc-900/50 border rounded-xl p-6 ${editingId ? 'border-purple-500/50 shadow-lg shadow-purple-500/10' : 'border-zinc-800'}`}>
-             {/* News Edit Form */}
-             <div className="flex justify-between items-center mb-4">
-                 <h3 className="text-lg font-medium text-white">
-                     {editingId ? 'Edit News Article' : 'Publish News Article Manually'}
-                 </h3>
-                 {editingId && (
-                     <button onClick={resetNewsForm} className="text-zinc-500 hover:text-zinc-300 text-sm flex items-center gap-1">
-                         <ArrowLeft className="w-4 h-4" /> Cancel Edit
-                     </button>
-                 )}
-             </div>
-
-             <form onSubmit={handleNewsSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label className="block text-sm text-zinc-400 mb-1">Article Title</label>
-                        <input required value={newNews.title} onChange={e => setNewNews({...newNews, title: e.target.value})} className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white focus:border-purple-500 outline-none" placeholder="e.g. Gemini 2.5 Released" />
-                    </div>
-                    <div>
-                        <label className="block text-sm text-zinc-400 mb-1">Category</label>
-                        <div className="flex gap-2">
-                           {showAddCategory ? (
-                               <div className="flex-1 flex gap-2">
-                                  <input 
-                                    value={newCategoryInput} 
-                                    onChange={e => setNewCategoryInput(e.target.value)}
-                                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddNewsCategory())}
-                                    className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white focus:border-purple-500 outline-none" 
-                                    placeholder="New Category Name"
-                                    autoFocus
-                                  />
-                                  <button type="button" onClick={handleAddNewsCategory} className="bg-purple-600 text-white px-3 rounded hover:bg-purple-500" title="Confirm category" aria-label="Confirm category"><Check className="w-4 h-4" /></button>
-                                  <button type="button" onClick={() => setShowAddCategory(false)} className="bg-zinc-800 text-zinc-400 px-3 rounded hover:bg-zinc-700" title="Cancel" aria-label="Cancel"><X className="w-4 h-4" /></button>
-                               </div>
-                           ) : (
-                               <>
-                                   <select 
-                                     value={newNews.category} 
-                                     onChange={e => setNewNews({...newNews, category: e.target.value})} 
-                                     title="Select news category"
-                                     aria-label="News category"
-                                     className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white focus:border-purple-500 outline-none"
-                                   >
-                                       {newsCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                                   </select>
-                                   <button 
-                                      type="button" 
-                                      onClick={() => setShowAddCategory(true)}
-                                      className="shrink-0 bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-zinc-300 px-3 rounded"
-                                      title="Add New Category"
-                                   >
-                                       <Plus className="w-4 h-4" />
-                                   </button>
-                               </>
-                           )}
-                        </div>
-                    </div>
-                </div>
-                <div>
-                   <label className="block text-sm text-zinc-400 mb-1">Short Description</label>
-                   <textarea required value={newNews.description} onChange={e => setNewNews({...newNews, description: e.target.value})} className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white h-20 focus:border-purple-500 outline-none" placeholder="A brief summary for the card view..." />
-                </div>
-                <div>
-                   <label className="block text-sm text-zinc-400 mb-1">Full Content</label>
-                   <textarea required value={newNews.content} onChange={e => setNewNews({...newNews, content: e.target.value})} className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white h-48 focus:border-purple-500 outline-none" placeholder="The full article content goes here..." />
-                </div>
-                
-                <div className="grid grid-cols-1 gap-4">
-                   <div>
-                     <label className="block text-sm text-zinc-400 mb-2">Featured Image</label>
-                     <ImageInputSection isTool={false} />
-                   </div>
-                   <div>
-                     <label className="block text-sm text-zinc-400 mb-1">Source / Author</label>
-                     <input value={newNews.source} onChange={e => setNewNews({...newNews, source: e.target.value})} className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white focus:border-purple-500 outline-none" placeholder="e.g. TechCrunch" />
-                   </div>
-                </div>
-                <div className="flex gap-3 pt-2">
-                    <button type="button" onClick={() => handlePreview('news')} className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 border border-zinc-700">
-                        <Eye className="w-4 h-4" /> Preview
-                    </button>
-                    <button type="submit" className="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2">
-                        <Save className="w-4 h-4" /> {editingId ? 'Update Article' : 'Publish Article'}
-                    </button>
-                </div>
-             </form>
-          </div>
-          </div>
+         <NewsCreateTab
+           editingId={editingId}
+           onAddNews={(article) => {
+             onAddNews(article);
+             handleNewsAdded(article);
+           }}
+           onUpdateNews={(id, article) => {
+             onUpdateNews(id, article);
+             handleNewsAdded(article);
+           }}
+           onCancel={resetNewsForm}
+           onPreview={handlePreview}
+           initialNews={editingNewsData}
+           newsCategories={newsCategories}
+           onAddCategory={handleAddNewsCategory}
+         />
        )}
 
       {/* Manage Tab */}
