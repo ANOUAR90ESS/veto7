@@ -773,7 +773,9 @@ $$ language plpgsql security definer;
                 type="file"
                 accept="image/*"
                 onChange={e => handleFileUpload(e, isTool)} 
-                className="w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer" 
+                className="w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer"
+                title="Upload image file"
+                aria-label="Image file upload" 
                 />
             )}
 
@@ -981,7 +983,7 @@ $$ language plpgsql security definer;
                                                 <span className="text-[10px] uppercase bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded">{tool.category}</span>
                                             </div>
                                             <div className="flex gap-2 mt-2">
-                                                <img src={tool.imageUrl} className="w-16 h-10 object-cover rounded bg-zinc-800" />
+                                                <img src={tool.imageUrl} className="w-16 h-10 object-cover rounded bg-zinc-800" alt={tool.name} title={tool.name} />
                                                 <p className="text-xs text-zinc-500 line-clamp-2">{tool.description}</p>
                                             </div>
                                         </div>
@@ -1060,11 +1062,11 @@ $$ language plpgsql security definer;
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm text-zinc-400 mb-1">Price</label>
-                            <input value={newTool.price} onChange={e => setNewTool({...newTool, price: e.target.value})} className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white focus:border-indigo-500 outline-none" />
+                            <input value={newTool.price} onChange={e => setNewTool({...newTool, price: e.target.value})} placeholder="Free, $9.99, Freemium" title="Tool price" aria-label="Tool price" className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white focus:border-indigo-500 outline-none" />
                         </div>
                         <div>
                             <label className="block text-sm text-zinc-400 mb-1">Website URL</label>
-                            <input value={newTool.website} onChange={e => setNewTool({...newTool, website: e.target.value})} className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white focus:border-indigo-500 outline-none" />
+                            <input value={newTool.website} onChange={e => setNewTool({...newTool, website: e.target.value})} placeholder="https://example.com" title="Tool website URL" aria-label="Tool website URL" className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white focus:border-indigo-500 outline-none" />
                         </div>
                     </div>
                     <div>
@@ -1075,6 +1077,9 @@ $$ language plpgsql security definer;
                         <input 
                         value={tagInput}
                         onChange={e => setTagInput(e.target.value)}
+                        placeholder="Enter tag and press Enter"
+                        title="Add tags"
+                        aria-label="Add tags"
                         onKeyDown={e => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
@@ -1211,6 +1216,9 @@ $$ language plpgsql security definer;
                   <input 
                     value={rssUrl} 
                     onChange={e => setRssUrl(e.target.value)} 
+                    placeholder="https://example.com/rss.xml"
+                    title="RSS feed URL"
+                    aria-label="RSS feed URL"
                     className="flex-1 bg-zinc-950 border border-zinc-700 rounded p-2 text-white"
                   />
                   <input 
@@ -1218,6 +1226,8 @@ $$ language plpgsql security definer;
                     min="1" 
                     max="50" 
                     value={rssImportCount}
+                    title="Number of items to import"
+                    aria-label="Number of items to import"
                     onChange={(e) => setRssImportCount(Math.min(50, Math.max(1, parseInt(e.target.value))))}
                     className="w-16 bg-zinc-950 border border-zinc-700 rounded p-2 text-white text-center"
                     title="Number of items to import (1-50)"
@@ -1376,14 +1386,16 @@ $$ language plpgsql security definer;
                                     placeholder="New Category Name"
                                     autoFocus
                                   />
-                                  <button type="button" onClick={handleAddNewsCategory} className="bg-purple-600 text-white px-3 rounded hover:bg-purple-500"><Check className="w-4 h-4" /></button>
-                                  <button type="button" onClick={() => setShowAddCategory(false)} className="bg-zinc-800 text-zinc-400 px-3 rounded hover:bg-zinc-700"><X className="w-4 h-4" /></button>
+                                  <button type="button" onClick={handleAddNewsCategory} className="bg-purple-600 text-white px-3 rounded hover:bg-purple-500" title="Confirm category" aria-label="Confirm category"><Check className="w-4 h-4" /></button>
+                                  <button type="button" onClick={() => setShowAddCategory(false)} className="bg-zinc-800 text-zinc-400 px-3 rounded hover:bg-zinc-700" title="Cancel" aria-label="Cancel"><X className="w-4 h-4" /></button>
                                </div>
                            ) : (
                                <>
                                    <select 
                                      value={newNews.category} 
                                      onChange={e => setNewNews({...newNews, category: e.target.value})} 
+                                     title="Select news category"
+                                     aria-label="News category"
                                      className="w-full bg-zinc-950 border border-zinc-700 rounded p-3 text-white focus:border-purple-500 outline-none"
                                    >
                                        {newsCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
@@ -1462,6 +1474,8 @@ $$ language plpgsql security definer;
                         <select 
                           value={manageToolCategory}
                           onChange={(e) => setManageToolCategory(e.target.value)}
+                          title="Filter tools by category"
+                          aria-label="Filter tools by category"
                           className="bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm rounded-lg pl-9 pr-4 py-2 outline-none focus:border-indigo-500 appearance-none cursor-pointer min-w-[160px]"
                         >
                             <option value="All">All Categories</option>
@@ -1475,6 +1489,8 @@ $$ language plpgsql security definer;
                             <select 
                               value={manageNewsCategory}
                               onChange={(e) => setManageNewsCategory(e.target.value)}
+                              title="Filter news by category"
+                              aria-label="Filter news by category"
                               className="bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm rounded-lg pl-9 pr-4 py-2 outline-none focus:border-purple-500 appearance-none cursor-pointer min-w-[160px]"
                             >
                                 <option value="All">All Categories</option>
@@ -1486,6 +1502,8 @@ $$ language plpgsql security definer;
                             <select 
                               value={manageNewsSort}
                               onChange={(e) => setManageNewsSort(e.target.value as 'newest' | 'oldest')}
+                              title="Sort news articles"
+                              aria-label="Sort news articles"
                               className="bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm rounded-lg pl-9 pr-4 py-2 outline-none focus:border-purple-500 appearance-none cursor-pointer min-w-[140px]"
                             >
                                 <option value="newest">Newest First</option>
@@ -1615,7 +1633,9 @@ $$ language plpgsql security definer;
                        <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
                           <div 
                             className="h-full bg-indigo-600 rounded-full" 
-                            style={{ width: `${(Number(count) / Math.max(tools.length, 1)) * 100}%` }}
+                            style={{
+                              width: `${(Number(count) / Math.max(tools.length, 1)) * 100}%`
+                            } as React.CSSProperties}
                           />
                        </div>
                     </div>
