@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Tool, Slide, TutorialSection, Course } from '../types';
-import { X, FileText, MonitorPlay, BookOpen, Loader2, CheckCircle, XCircle, Lightbulb, GraduationCap, Play, Sparkles } from 'lucide-react';
+import { X, FileText, MonitorPlay, BookOpen, Loader2, CheckCircle, XCircle, Lightbulb, GraduationCap, Play, Sparkles, AlertCircle } from 'lucide-react';
 import { generateToolSlides, generateToolTutorial, generateFullCourse } from '../services/geminiService';
 import { CoursePlayer } from './CoursePlayer';
 

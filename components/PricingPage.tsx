@@ -23,9 +23,15 @@ const PricingPage: React.FC<PricingPageProps> = ({ user, onLoginRequest }) => {
 
     try {
       // Call our backend API to generate the Stripe Checkout URL
+      const { supabase } = await import('../services/supabase');
+      const { data: { session } } = await supabase!.auth.getSession();
+
       const response = await fetch('http://localhost:4000/api/create-checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token || ''}`
+        },
         body: JSON.stringify({ 
             userId: user.id, 
             plan: plan 

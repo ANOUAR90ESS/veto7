@@ -20,9 +20,15 @@ const PaymentSuccess: React.FC = () => {
 
     const verify = async () => {
       try {
+        const { supabase } = await import('../services/supabase');
+        const { data: { session } } = await supabase!.auth.getSession();
+
         const response = await fetch('http://localhost:4000/api/verify-payment', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session?.access_token || ''}`
+          },
           body: JSON.stringify({ sessionId }),
         });
 

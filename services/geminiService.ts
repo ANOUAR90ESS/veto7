@@ -2,14 +2,19 @@
 import { Type, Modality } from "@google/genai";
 import { Tool, Slide, NewsArticle, TutorialSection, Course } from "../types";
 
+import { supabase } from './supabase';
+
 // --- API Proxy Helper ---
 // This function handles communication with your Vercel serverless function
 const callGeminiAPI = async (payload: any) => {
   try {
+    const { data: { session } } = await supabase!.auth.getSession();
+
     const response = await fetch('/api/gemini', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session?.access_token || ''}`
       },
       body: JSON.stringify(payload),
     });

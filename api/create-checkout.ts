@@ -1,9 +1,16 @@
 
 import Stripe from 'stripe';
+import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2023-10-16' as any,
 });
+
+// Initialize Supabase Admin Client
+const supabaseUrl = process.env.SUPABASE_URL || '';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
@@ -11,7 +18,21 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const { userId, plan } = req.body;
+    // Validate Auth Header
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const token = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader;
+    const { data, error } = await supabaseAdmin.auth.getUser(token);
+
+    if (error || !data.user) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+
+    const userId = data.user.id;
+    const { plan } = req.body;
     
     // In local dev, origin might be localhost:5173, in prod it's your domain
     const origin = req.headers.origin || 'http://localhost:5173';

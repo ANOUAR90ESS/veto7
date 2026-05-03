@@ -1,14 +1,28 @@
 
 import { GoogleGenAI } from "@google/genai";
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase Admin Client
+const supabaseUrl = process.env.SUPABASE_URL || '';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 export default async function handler(req: any, res: any) {
-  // CORS headers for handling cross-origin requests if needed
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  // CORS headers for handling cross-origin requests
+  const origin = req.headers.origin || '';
+  // Verify origin matches our domain or localhost in dev
+  const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173', 'https://www.vetorre.com', 'https://vetorre.com'];
+  if (allowedOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+      res.setHeader('Access-Control-Allow-Origin', 'https://www.vetorre.com');
+  }
+
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS,POST');
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
   );
 
   if (req.method === 'OPTIONS') {
@@ -21,6 +35,19 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
+    // Validate Auth Header
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const token = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader;
+    const { data, error } = await supabaseAdmin.auth.getUser(token);
+
+    if (error || !data.user) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+
     const { task, model, contents, config, prompt, image, operationName } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
 

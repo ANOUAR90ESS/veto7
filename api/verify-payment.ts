@@ -19,6 +19,19 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
+    // Validate Auth Header
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const token = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader;
+    const { data, error } = await supabaseAdmin.auth.getUser(token);
+
+    if (error || !data.user) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+
     const { sessionId } = req.body;
 
     if (!sessionId) {

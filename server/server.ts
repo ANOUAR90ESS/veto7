@@ -99,8 +99,8 @@ app.post('/api/generate', requireAuth, async (req: Request, res: Response) => {
 });
 
 // --- Payment Routes ---
-app.post('/api/create-checkout', (req, res) => createCheckoutHandler(req, res));
-app.post('/api/verify-payment', (req, res) => verifyPaymentHandler(req, res));
+app.post('/api/create-checkout', requireAuth, (req, res) => createCheckoutHandler(req, res));
+app.post('/api/verify-payment', requireAuth, (req, res) => verifyPaymentHandler(req, res));
 
 /**
  * Health Check for Serverless Deployment
